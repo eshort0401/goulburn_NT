@@ -1,0 +1,28 @@
+Timer unit: 1e-06 s
+
+Total time: 0.5717 s
+File: <ipython-input-17-8023853a5e69>
+Function: test_func at line 2
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+     2                                           def test_func(z0=0, z1=15000, dz=100):
+     3                                               
+     4         1         32.0     32.0      0.0      Z = np.arange(z0,z1,dz)
+     5         1         16.0     16.0      0.0      U_interp = np.empty((
+     6         1       1126.0   1126.0      0.2          np.size(U.time),
+     7         1          6.0      6.0      0.0          np.size(Z),
+     8         1       1687.0   1687.0      0.3          np.size(U.longitude),np.size(U.latitude)
+     9         1     389762.0 389762.0     68.2      ))*np.nan
+    10         1       1143.0   1143.0      0.2      U_ar = U.U.values
+    11         1     156770.0 156770.0     27.4      Z_ar = PH.geopotential.values/9.80665
+    12                                           # for i in list(range(0,np.size(U.longitude))):
+    13                                           #     for j in list(range(0,np.size(U.latitude))):
+    14                                           #         for k in list(range(0,np.size(U.time))):
+    15        11         42.0      3.8      0.0      for i in list(range(0,10)):
+    16       110        150.0      1.4      0.0          for j in list(range(0,10)):
+    17      1100       1721.0      1.6      0.3              for k in list(range(0,10)):
+    18                                                           
+    19      1000      19244.0     19.2      3.4                  U_interp[k,:,i,j] = np.interp(Z, Z_ar[k,:,i,j], U_ar[k,:,i,j], left=np.nan, right=np.nan)
+    20                                                           
+    21         1          1.0      1.0      0.0      return U_interp
