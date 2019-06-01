@@ -1,28 +1,32 @@
 Timer unit: 1e-06 s
 
-Total time: 0.5717 s
-File: <ipython-input-17-8023853a5e69>
-Function: test_func at line 2
+Total time: 2.24921 s
+File: <ipython-input-80-42ecfdfd6c06>
+Function: horizontal_tran_interp at line 1
 
 Line #      Hits         Time  Per Hit   % Time  Line Contents
 ==============================================================
-     2                                           def test_func(z0=0, z1=15000, dz=100):
-     3                                               
-     4         1         32.0     32.0      0.0      Z = np.arange(z0,z1,dz)
-     5         1         16.0     16.0      0.0      U_interp = np.empty((
-     6         1       1126.0   1126.0      0.2          np.size(U.time),
-     7         1          6.0      6.0      0.0          np.size(Z),
-     8         1       1687.0   1687.0      0.3          np.size(U.longitude),np.size(U.latitude)
-     9         1     389762.0 389762.0     68.2      ))*np.nan
-    10         1       1143.0   1143.0      0.2      U_ar = U.U.values
-    11         1     156770.0 156770.0     27.4      Z_ar = PH.geopotential.values/9.80665
-    12                                           # for i in list(range(0,np.size(U.longitude))):
-    13                                           #     for j in list(range(0,np.size(U.latitude))):
-    14                                           #         for k in list(range(0,np.size(U.time))):
-    15        11         42.0      3.8      0.0      for i in list(range(0,10)):
-    16       110        150.0      1.4      0.0          for j in list(range(0,10)):
-    17      1100       1721.0      1.6      0.3              for k in list(range(0,10)):
-    18                                                           
-    19      1000      19244.0     19.2      3.4                  U_interp[k,:,i,j] = np.interp(Z, Z_ar[k,:,i,j], U_ar[k,:,i,j], left=np.nan, right=np.nan)
-    20                                                           
-    21         1          1.0      1.0      0.0      return U_interp
+     1                                           def horizontal_tran_interp(ds, lon0, lat0, lon1, lat1, n):
+     2                                           
+     3         1        245.0    245.0      0.0      lon = np.linspace(lon0, lon1, num=n)
+     4         1        140.0    140.0      0.0      lat = np.linspace(lat0, lat1, num=n)
+     5                                           
+     6                                           #     p = pp.Geod(ellps='WGS84')
+     7                                           #     distance = p.inv(np.array([lon0]*np.size(lon)), np.array([lat0]*np.size(lat)), lon, lat)[2]
+     8                                           
+     9         1       6040.0   6040.0      0.3      LON, LAT = np.meshgrid(ds.longitude, ds.latitude);
+    10         1        206.0    206.0      0.0      interp_LON, interp_LAT = np.meshgrid(lon, lat);
+    11                                               
+    12         1    2239599.0 2239599.0     99.6      ds_interp = ds.interp(longitude=lon, latitude=lat)
+    13                                           
+    14         1          4.0      4.0      0.0      ds_interp = ds_interp.isel(
+    15         1          4.0      4.0      0.0          longitude=xr.DataArray(
+    16         1         16.0     16.0      0.0              np.arange(0,np.size(lon)), 
+    17         1        139.0    139.0      0.0              dims='transect_axis'),
+    18         1          2.0      2.0      0.0          latitude=xr.DataArray(
+    19         1          9.0      9.0      0.0              np.arange(0,np.size(lon)), 
+    20         1       2577.0   2577.0      0.1              dims='transect_axis',)
+    21                                               )
+    22         1        230.0    230.0      0.0      ds_interp = ds_interp.drop('longitude').drop('latitude')
+    23                                               
+    24         1          2.0      2.0      0.0      return ds_interp
