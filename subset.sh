@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for i in $(seq -f "%02g" 14 14); do 
+for i in $(seq -f "%02g" 05 13); do 
    
     a=20$i
     b=$((a+1)) 
