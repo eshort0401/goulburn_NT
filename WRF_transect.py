@@ -41,6 +41,8 @@ b_lat = trans_lat1[0] - lat0
 # Iterate over all years
 for i in range(14, 15):
 
+    print('Solving for 20{}'.format(str(i).zfill(2)))
+
     # Caclulate transects for first day of data
     base = '/g/data/w40/esh563/goulburn_NT/20{}20{}'.format(str(i).zfill(2), str(i+1).zfill(2))
 
@@ -49,26 +51,35 @@ for i in range(14, 15):
 
     W_path = base + '/W/W_goulburn_20{}12*.nc'.format(str(i).zfill(2))
 
-    proj_j = (xr.open_mfdataset(U_path, chunks={'time': 744}).U * b_lon + xr.open_mfdataset(V_path, chunks={'time': 744}).V * b_lat)
-    proj_j = proj_j / np.sqrt(b_lon ** 2 + b_lat ** 2)
+    PRCP_path = base + '/PRCP/prcp_goulburn_20{}12*.nc'.format(str(i).zfill(2))
 
-    proj_tran = ta.calc_transects(proj_j, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
-    W_tran = ta.calc_transects(xr.open_mfdataset(W_path, chunks={'time': 744}).W, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    proj = (xr.open_mfdataset(U_path, chunks={'time': 744}).U * b_lon + xr.open_mfdataset(V_path, chunks={'time': 744}).V * b_lat)
+    proj = proj / np.sqrt(b_lon ** 2 + b_lat ** 2)
+
+    # PRCP = xr.open_mfdataset(PRCP_path, chunks={'time': 744}).RAINNC
+
+    proj_tran = ta.calc_transects(proj, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    #W_tran = ta.calc_transects(xr.open_mfdataset(W_path, chunks={'time': 744}).W, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    #PRCP_tran = ta.calc_transects(PRCP, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
 
     z = np.loadtxt('average_model_levels.txt')[0:71]
     proj_tran = proj_tran.assign_coords(level = z)\
         .assign_coords(coastal_axis = coast_distances)\
         .assign_coords(transect_axis = tran_distances)\
         .rename('wind_proj')
-    W_tran = W_tran.assign_coords(level = z)\
-        .assign_coords(coastal_axis = coast_distances)\
-        .assign_coords(transect_axis = tran_distances)\
-        .rename('W')
+    #W_tran = W_tran.assign_coords(level = z)\
+     #   .assign_coords(coastal_axis = coast_distances)\
+      #  .assign_coords(transect_axis = tran_distances)\
+       # .rename('W')
+    #PRCP_tran = PRCP_tran.assign_coords(coastal_axis = coast_distances)\
+     #   .assign_coords(transect_axis = tran_distances)\
+      #  .rename('RAINNC')
     
     save_path_proj = '/g/data/w40/esh563/goulburn_NT/transects/wind_proj_goulburn_20{}12.nc'.format(str(i).zfill(2))
-    save_path_W = '/g/data/w40/esh563/goulburn_NT/transects/W_goulburn_20{}12.nc'.format(str(i).zfill(2))
+    #save_path_W = '/g/data/w40/esh563/goulburn_NT/transects/W_goulburn_20{}12.nc'.format(str(i).zfill(2))
+    #save_path_PRCP = '/g/data/w40/esh563/goulburn_NT/transects/PRCP_goulburn_20{}12.nc'.format(str(i).zfill(2))
 
     proj_tran.to_netcdf(path=save_path_proj, mode='w', format='NETCDF4')
-    W_tran.to_netcdf(path=save_path_W, mode='w', format='NETCDF4')
-
+    # W_tran.to_netcdf(path=save_path_W, mode='w', format='NETCDF4')
+    # PRCP_tran.to_netcdf(path=save_path_PRCP, mode='w', format='NETCDF4')
 
