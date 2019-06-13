@@ -54,6 +54,7 @@ for i in range(5, 15):
     PRCP_path = base + '/PRCP/prcp_goulburn_20{}12*.nc'.format(str(i).zfill(2))
 
     T_path = base + '/T/theta_goulburn_20{}12*.nc'.format(str(i).zfill(2))
+    clouds_path = base + '/clouds_daily/clouds_goulburn_20{}12*.nc'.format(str(i).zfill(2))
 
     #proj = (xr.open_mfdataset(U_path, chunks={'time': 744}).U * b_lon + xr.open_mfdataset(V_path, chunks={'time': 744}).V * b_lat)
     #proj = proj / np.sqrt(b_lon ** 2 + b_lat ** 2)
@@ -63,7 +64,8 @@ for i in range(5, 15):
     #proj_tran = ta.calc_transects(proj, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
     #W_tran = ta.calc_transects(xr.open_mfdataset(W_path, chunks={'time': 744}).W, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
     #PRCP_tran = ta.calc_transects(PRCP, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
-    T_tran = ta.calc_transects(xr.open_mfdataset(T_path, chunks={'time': 744}).T, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    #T_tran = ta.calc_transects(xr.open_mfdataset(T_path, chunks={'time': 744}).T, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    cloud_tran = ta.calc_transects(xr.open_mfdataset(clouds_path, concat_dim = 'time', chunks={'time': 744}), trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
 
     z = np.loadtxt('average_model_levels.txt')[0:71]
     #proj_tran = proj_tran.assign_coords(level = z)\
@@ -77,18 +79,18 @@ for i in range(5, 15):
     #PRCP_tran = PRCP_tran.assign_coords(coastal_axis = coast_distances)\
      #   .assign_coords(transect_axis = tran_distances)\
       #  .rename('RAINNC')
-    T_tran = T_tran.assign_coords(level = z)\
+    clouds_tran = clouds_tran.assign_coords(level = z)\
         .assign_coords(coastal_axis = coast_distances)\
         .assign_coords(transect_axis = tran_distances)\
-        .rename('T')
-    
+         
     #save_path_proj = '/g/data/w40/esh563/goulburn_NT/transects/wind_proj_goulburn_20{}12.nc'.format(str(i).zfill(2))
     #save_path_W = '/g/data/w40/esh563/goulburn_NT/transects/W_goulburn_20{}12.nc'.format(str(i).zfill(2))
     #save_path_PRCP = '/g/data/w40/esh563/goulburn_NT/transects/PRCP_goulburn_20{}12.nc'.format(str(i).zfill(2))
-    save_path_T = '/g/data/w40/esh563/goulburn_NT/transects/T_goulburn_20{}12.nc'.format(str(i).zfill(2))
+    #save_path_T = '/g/data/w40/esh563/goulburn_NT/transects/T_goulburn_20{}12.nc'.format(str(i).zfill(2))
+    save_path_clouds = '/g/data/w40/esh563/goulburn_NT/transects/clouds_goulburn_20{}12.nc'.format(str(i).zfill(2))
 
     # proj_tran.to_netcdf(path=save_path_proj, mode='w', format='NETCDF4')
     # W_tran.to_netcdf(path=save_path_W, mode='w', format='NETCDF4')
     # PRCP_tran.to_netcdf(path=save_path_PRCP, mode='w', format='NETCDF4')
-    T_tran.to_netcdf(path=save_path_PRCP, mode='w', format='NETCDF4')
+    clouds_tran.to_netcdf(path=save_path_clouds, mode='w', format='NETCDF4')
 
