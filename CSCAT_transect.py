@@ -18,7 +18,7 @@ coast_lon1 = 133.3290
 coast_lat1 = -12.1468
 
 trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans, coast_distances, tran_distances = ta.define_transects(
-    lon0, lat0, coast_lon1, coast_lat1, 453300
+    lon0, lat0, coast_lon1, coast_lat1, 453300, spacing = 25000
 )
 
 static_path = '/g/data/ua8/ARCCSS_Data/MCASClimate/v1-0/static/static.nc'
@@ -43,17 +43,19 @@ for i in range(12, 14):
 
     print('Solving for 20{}'.format(str(i).zfill(2)))
     
-    path = '/g/data/w40/esh563/goulburn_NT/CSCAT/CSCAT_20{}12.nc'.format(str(i).zfill(2))
+    path = '/g/data/w40/esh563/goulburn_NT/CSCAT/CSCAT_goulburn_20{}12.nc'.format(str(i).zfill(2))
     CSCAT = xr.open_dataset(path)
 
-    proj = CSCAT.u * b_lon + CSCAT.v * b_lat
+    proj = CSCAT.u_pert_mean * b_lon + CSCAT.v_pert_mean * b_lat
     proj = proj / np.sqrt(b_lon ** 2 + b_lat ** 2)
 
     CSCAT_tran = ta.calc_transects(proj, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    p_value_tran = ta.calc_transects(CSCAT.p_value_mean, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
 
     CSCAT_tran = CSCAT_tran.assign_coords(coastal_axis = coast_distances)
     CSCAT_tran = CSCAT_tran.assign_coords(transect_axis = tran_distances)
     CSCAT_tran = CSCAT_tran.rename('wind_proj')
+    CSCAT_p_value_tran = CSCAT_p_value_tran. 
     
     save_path_CSCAT = '/g/data/w40/esh563/goulburn_NT/transects/CSCAT_goulburn_20{}12.nc'.format(str(i).zfill(2))
 
