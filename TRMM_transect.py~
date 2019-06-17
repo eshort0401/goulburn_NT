@@ -39,26 +39,16 @@ b_lon = trans_lon1[0] - lon0
 b_lat = trans_lat1[0] - lat0
 
 # Create transects    
-path = '/g/data/w40/esh563/goulburn_NT/CSCAT/CSCAT_goulburn_12.nc'
-CSCAT = xr.open_dataset(path)
+path = '/g/data/w40/esh563/goulburn_NT/TRMM/TRMM_goulburn_12.nc'
+TRMM = xr.open_dataset(path)
 
-proj = CSCAT.u_pert_mean * b_lon + CSCAT.v_pert_mean * b_lat
-proj = proj / np.sqrt(b_lon ** 2 + b_lat ** 2)
+TRMM_tran = ta.calc_transects(TRMM.p_mean, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
 
-CSCAT_tran = ta.calc_transects(proj, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
-CSCAT_p_value_tran = ta.calc_transects(CSCAT.p_value_mean, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+TRMM_tran = TRMM_tran.assign_coords(coastal_axis = coast_distances)
+TRMM_tran = TRMM_tran.assign_coords(transect_axis = tran_distances)
+TRMM_tran = TRMM_tran.rename('p_mean')
 
-CSCAT_tran = CSCAT_tran.assign_coords(coastal_axis = coast_distances)
-CSCAT_tran = CSCAT_tran.assign_coords(transect_axis = tran_distances)
-CSCAT_tran = CSCAT_tran.rename('wind_proj')
+save_path_TRMM = '/g/data/w40/esh563/goulburn_NT/transect_means/TRMM_goulburn_12.nc'
 
-CSCAT_p_value_tran = CSCAT_p_value_tran.assign_coords(coastal_axis = coast_distances)
-CSCAT_p_value_tran = CSCAT_p_value_tran.assign_coords(transect_axis = tran_distances)
-CSCAT_p_value_tran = CSCAT_p_value_tran.rename('p_value')
-
-CSCAT_tran = xr.merge((CSCAT_tran, CSCAT_p_value_tran)) 
-
-save_path_CSCAT = '/g/data/w40/esh563/goulburn_NT/transect_means/CSCAT_goulburn_12.nc'
-
-CSCAT_tran.to_netcdf(path=save_path_CSCAT, mode='w', format='NETCDF4')
+TRMM_tran.to_netcdf(path=save_path_CSCAT, mode='w', format='NETCDF4')
 

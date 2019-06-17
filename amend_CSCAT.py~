@@ -16,4 +16,6 @@ CSCAT_LST = [6, 9.5, (11 + 55/60), 18, 21.5, (23 + 55/60)]
 CSCAT = CSCAT.assign_coords(time = CSCAT_LST)
 CSCAT.time.attrs['time_zone'] = 'local solar time'
 
-CSCAT.to_netcdf('/g/data/w40/esh563/CSCAT.nc', mode='w', format='NETCDF4')
+CSCAT = CSCAT.sel(latitude = slice(-12.75, -7.75), longitude = slice(-132.75, 136.25))
+
+CSCAT.to_netcdf('/g/data/w40/esh563/goulburn_NT/CSCAT/CSCAT_12.nc', mode='w', format='NETCDF4')

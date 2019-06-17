@@ -9,22 +9,22 @@ import numpy as np
 file_prepend = str(sys.argv[1])
 
 print('Averaging ' + file_prepend)
-print('Calculating year 2005')
+print('Calculating year 2012')
 
 tran_i = xr.open_dataset(
-    '/g/data/w40/esh563/goulburn_NT/transects/{}_goulburn_200512.nc'.format(file_prepend)
+    '/g/data/w40/esh563/goulburn_NT/transects/{}_goulburn_201212.nc'.format(file_prepend)
 )
 
 if not(sys.argv[2] in ['False', 'false', 'f', '0']):
     tran_i = (tran_i - tran_i.rolling(time=24, center=True).mean()).dropna('time')
     
 tran_i = tran_i.mean(dim='coastal_axis')
-date_times = np.arange('2005-12', '2006-01', dtype='datetime64[h]')
+date_times = np.arange('2012-12', '2013-01', dtype='datetime64[h]')
 tran_i = tran_i.assign_coords(time = date_times)
 
 tran_list = [tran_i] * 10
 
-for i in range(6,15):
+for i in range(13,14):
     
     print('Calculating year 20{}.'.format(str(i).zfill(2)))
 
@@ -43,8 +43,7 @@ for i in range(6,15):
     
 tran = xr.concat(tuple(tran_list), dim = 'time')
 
-tran = tran.assign_coords(time = date_times)
 tran_mean = tran.groupby('time.hour').mean('time')
 
-save_path = '/g/data/w40/esh563/goulburn_NT/transect_means/{}_goulburn_12.nc'.format(file_prepend,str(i).zfill(2))
+save_path = '/g/data/w40/esh563/goulburn_NT/transect_means/{}_goulburn_12_1213.nc'.format(file_prepend,str(i).zfill(2))
 tran_mean.to_netcdf(path=save_path, mode='w', format='NETCDF4')
