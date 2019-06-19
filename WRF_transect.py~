@@ -39,7 +39,7 @@ b_lon = trans_lon1[0] - lon0
 b_lat = trans_lat1[0] - lat0
 
 # Iterate over all years
-for i in range(5, 15):
+for i in range(12, 15):
 
     print('Solving for 20{}'.format(str(i).zfill(2)))
 
@@ -65,7 +65,7 @@ for i in range(5, 15):
     #W_tran = ta.calc_transects(xr.open_mfdataset(W_path, chunks={'time': 744}).W, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
     #PRCP_tran = ta.calc_transects(PRCP, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
     #T_tran = ta.calc_transects(xr.open_mfdataset(T_path, chunks={'time': 744}).T, trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
-    cloud_tran = ta.calc_transects(xr.open_mfdataset(clouds_path, concat_dim = 'time', chunks={'time': 744}), trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
+    clouds_tran = ta.calc_transects(xr.open_mfdataset(clouds_path, concat_dim = 'time', chunks={'time': 744}), trans_lon0, trans_lat0, trans_lon1, trans_lat1, n_points, n_trans)
 
     z = np.loadtxt('average_model_levels.txt')[0:71]
     #proj_tran = proj_tran.assign_coords(level = z)\
